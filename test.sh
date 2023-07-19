@@ -1,12 +1,12 @@
 #!/bin/bash
-#GIT_REPO=<repo_name>
+GIT_REPO="https://github.com/ayals-auto/webserver-testing.git"
 
 #########################################################
-# GLobal prequisits tests
+# GLobal prerequisites tests
 ########################################################
 
 function init_test {
-    #check installtion
+    #check installation
 if 
     ! dpkg -s terraform &> /dev/null; 
     then
@@ -86,15 +86,16 @@ function terraform_run {
 #########################################################
 # Clear env and terraform installtion
 ########################################################
+
+function terraform_destroy {
+    echo "destroy enivroment"
+    terragrunt destroy -y
+}
+
 function stop {
     echo "destroying service"
     terraform_destroy
     remove_terraform  
-}
-
-function terraform_destroy {
-    echo "destroy enivroment"
-    terraform destroy -y
 }
 
 function remove_terraform {
