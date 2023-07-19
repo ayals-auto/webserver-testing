@@ -73,13 +73,12 @@ function start {
 function clone_repo {
     echo "clone repo"
     git clone $GIT_REPO
-    cd terraform_dir
 }
 
 function terraform_run {
-    echo "initiating and runing terraform"
-    terraform init
-    terraform applay -auto-approve
+    echo "initiating and running terraform"
+    terragrunt init
+    terragrunt apply -auto-approve
 }
 
 
