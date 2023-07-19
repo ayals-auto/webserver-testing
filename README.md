@@ -1,13 +1,13 @@
 # Installtion script for docker env
 
 Prerequisites
-- chmod u+x test.sh
+- chmod u+x ./test.sh
 - The script should run in docker swarm ENV
-    1 Make sure docker is installed 
-    2 start swarm using the following command
-    - docker swarm init --advertise-addr 127.0.0.1
-    3 check the node 
-    - docker node ls
+    - Make sure docker is installed 
+    - start swarm using the following command
+         docker swarm init --advertise-addr 127.0.0.1
+    - check the node 
+        docker node ls
 
 
 - Choose env to install 
