@@ -19,30 +19,25 @@ if
         apt-get update -y
         apt-get install terraform -y
         apt-get install wget
-        wget https://github.com/gruntwork-io/terragrunt/releases/download/v0.38.12/terragrunt_darwin_amd64
         #######################################################################
         # Install terragrunt
         #######################################################################
-        apt-get install wget
-        wget https://github.com/gruntwork-io/terragrunt/releases/download/v0.38.12/terragrunt_darwin_amd64
-        mv terragrunt_darwin_amd64 terragrunt
-        chmod u+x terragrunt
-        mv terragrunt /usr/local/bin/terragrunt
+         sudo snap install terragrunt
     else
         echo "terraform allredy installed"
 fi
 
 }
 
-# Check if os is linux ubuntu
+# Check if the os is Linux ubuntu
 function check_env {
         OS_VERSION=$(grep -E '^(NAME)=' /etc/os-release  &> /dev/null ) 
         if [ $? != 0 ]; then
-            echo "this script should run only on Ubuntu"
+            echo "This script should run only on Ubuntu"
             exit 1
         else
-            if [ "${OS_VERSION:6:6}" != Ubuntu  ] ; then
-                    echo "this script should run only on Ubuntu"
+            if  [ "${OS_VERSION:6:6}" -eq "Ubuntu"  ]; then
+                    echo "This script should run only on Ubuntu"
                     exit 1
             else
                     echo "${OS_VERSION:6:6} we are good to go"
@@ -52,7 +47,7 @@ function check_env {
 }
 
 #########################################################
-# Initiate env creation and terraform installtion
+# Initiate env creation and terraform installation
 ########################################################
 
 function start {
@@ -108,7 +103,7 @@ function remove_terraform {
 
 
 function status {
-    echo "checing service status"
+    echo "checking service status"
     echo "#############################################################"
     echo "#  Service condition"
     echo "#############################################################"
@@ -128,5 +123,5 @@ case $1 in
     status )
         status ;;
     *)
-       echo "you must enter a chooice, the option are: start stop status";;
+       echo "you must enter a choice, the options are: start stop status";;
 esac
