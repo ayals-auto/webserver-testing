@@ -22,7 +22,9 @@ if
         #######################################################################
         # Install terragrunt
         #######################################################################
-         sudo snap install terragrunt
+        wget https://github.com/gruntwork-io/terragrunt/releases/download/v0.48.4/terragrunt_linux_amd64
+        mv terragrunt_linux_amd64 terragrunt
+        mv terragrunt /usr/local/bin/terragrunt
     else
         echo "terraform allredy installed"
 fi
