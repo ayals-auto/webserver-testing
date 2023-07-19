@@ -1,5 +1,6 @@
 #!/bin/bash
 GIT_REPO="https://github.com/ayals-auto/webserver-testing.git"
+ENV=$2
 
 #########################################################
 # GLobal prerequisites tests
@@ -7,18 +8,17 @@ GIT_REPO="https://github.com/ayals-auto/webserver-testing.git"
 
 function init_test {
     #check installation
-if 
-    ! dpkg -s terraform &> /dev/null; 
+if
+    ! dpkg -s terraform &> /dev/null;
     then
         #######################################################################
         # Install terraform
         #######################################################################
-        apt-get install wget curl unzip software-properties-common gnupg2 -y 
-        curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add - 
+        apt-get -qq install wget curl unzip software-properties-common gnupg2 -y
+        curl -fsSL https://apt.releases.hashicorp.com/gpg | apt-key add -
         apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main" -y
         apt-get update -y
-        apt-get install terraform -y
-        apt-get install wget
+        apt-get -qq install terraform  -y
         #######################################################################
         # Install terragrunt
         #######################################################################
@@ -34,7 +34,7 @@ fi
 
 # Check if the os is Linux ubuntu
 function check_env {
-        OS_VERSION=$(grep -E '^(NAME)=' /etc/os-release  &> /dev/null ) 
+        OS_VERSION=$(grep -E '^(NAME)=' /etc/os-release  &> /dev/null )
         if [ $? != 0 ]; then
             echo "This script should run only on Ubuntu"
             exit 1
@@ -49,6 +49,24 @@ function check_env {
 
 }
 
+function choose_env() {
+        echo "choose env $ENV"
+        if [[ "$ENV" == "prod" ]]
+        then
+        cd  webserver-testing/main/prod
+        elif [[ "$ENV" ==  "dev" ]]
+        then
+         echo "changing to dev"
+         cd  webserver-testing/main/dev
+        elif [[ "$ENV" == "all" ]]
+        then
+        cd  webserver-testing/main
+        else
+                echo " please choose env to install"
+                exit 1
+        fi
+}
+
 #########################################################
 # Initiate env creation and terraform installation
 ########################################################
@@ -56,16 +74,10 @@ function check_env {
 function start {
     echo "creating service"
     check_env
-    init_test
     clone_repo
-    case $1 in
-        prod )
-            cd main/prod ;;
-        dev )
-            cd main/dev;;
-        *)
-        echo "default create dev";;
-    esac
+    choose_env
+        pwd
+    init_test
     terraform_run
 
 }
@@ -78,8 +90,13 @@ function clone_repo {
 
 function terraform_run {
     echo "initiating and running terraform"
-    terragrunt init
-    terragrunt apply -auto-approve
+    if [[ "$ENV" != "all" ]]
+    then
+        terragrunt init
+        terragrunt apply -auto-approve
+   else
+       terragrunt run-all apply -auto-approve
+   fi
 }
 
 
@@ -90,14 +107,27 @@ function terraform_run {
 
 function terraform_destroy {
     echo "destroy enivroment"
-    terragrunt destroy -y
+    if [[ "$ENV" != "all" ]]
+    then
+        terragrunt destroy -auto-approve
+        rm main/$ENV/.terraform.lock.hcl
+        rm -R main/$ENV/.terragrunt-cache/
+    else
+
+        terragrunt run-all destroy -auto-approve
+        rm main/.terraform.lock.hcl
+        rm -R main/.terragrunt-cache/
+
+    fi
 }
 
 function stop {
     echo "destroying service"
+    choose_env
     terraform_destroy
-    remove_terraform  
-}
+    remove_terraform
+    rm /usr/local/bin/terragrunt
+   }
 
 function remove_terraform {
     apt-get purge terraform -y
@@ -117,7 +147,7 @@ function status {
     docker node ls
 }
 
-# choose an option 
+# choose an option
 case $1 in
     start )
         start ;;
@@ -126,5 +156,5 @@ case $1 in
     status )
         status ;;
     *)
-       echo "you must enter a choice, the options are: start stop status";;
+       echo "You must enter a choice, the options are: start stop status";;
 esac
