@@ -9,11 +9,11 @@ Prerequisites
     - check the node 
         docker node ls
 
-
 - Choose env to install 
     - dev
     - prod
-- There are three options for running this script.
+
+- Options for running this script.
     # start 
         - install terraform in case it's not installed 
         - clone relevant repositories
@@ -21,9 +21,8 @@ Prerequisites
     # stop  
         - runs terraform destroy
         - cleaning the files 
-    # Troubleshooting 
-        - status
-        - shows if the implementation is runing or not
+    # status - Troubleshooting 
+        - shows if the implementation is running or not
         ./test.sh status  
         In case Terraform runs successfully but the server is not up.
         run:
