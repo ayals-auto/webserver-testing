@@ -13,6 +13,7 @@ inputs = {
   docker_image       = "devonfire/web-server-testing"
   num_replicated     = 2
   target_port        = 3000
+  published_port     = 8080
 }
 
 
